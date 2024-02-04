@@ -1,12 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}" />
-</head>
-<body>
-    <div class="container my-3">
+<html lang="ko" layout:decorate="~{layout}">
+    <div layout:fragment="content" class="container my-3">
         <table class="table">
             <thead class="table-dark">
                 <tr>
@@ -28,6 +22,4 @@
             </tbody>
         </table>
     </div>
-
-</body>
 </html>
