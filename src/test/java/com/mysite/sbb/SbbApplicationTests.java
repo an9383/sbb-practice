@@ -148,7 +148,7 @@ class SbbApplicationTests {
 	}
 
 	@Test
-	@Transactional	// -> DB 세션을 유지
+	@Transactional(readOnly = true)	// 성능에 좋음.
 	void testJpaAnswerSelect2() {
 		Optional<Question> oq = this.questionRepository.findById(2);
 		assertTrue(oq.isPresent());
