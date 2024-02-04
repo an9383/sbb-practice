@@ -10,8 +10,8 @@ import com.mysite.sbb.question.QuestionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -101,35 +101,23 @@ class SbbApplicationTests {
 	}
 
 	@Test
-	void testJpaFindBySubjectLike() {
-		List<Question> qList = this.questionRepository.findBySubjectLike("sbb%");
-		Question q = qList.get(0);
-		assertEquals("sbb가 무엇인가요?", q.getSubject());
-
-//		Optional<Question> oq = this.questionRepository.findById(1);
-//		assertTrue(oq.isPresent());
-//		Question q = oq.get();
-//		q.setSubject("sbb가 무엇인가요?");
-//		this.questionRepository.save(q);
-	}
-
-	@Test
 	void testJpaQuestionUpdate() {
 		// 1. update할 row데이터를 가져옵니다.
-		Optional<Question> oq = this.questionRepository.findById(2);
+		Optional<Question> oq = this.questionRepository.findById(1);
 		// 2. 데이터 존재 여부 확인
-		assertTrue(oq.isPresent());		// row데이터 존재
+		assertTrue(oq.isPresent()); // row데이터 존재
 		// 3. 실제 수정할 객체를 가져와서 값을 수정
 		Question q = oq.get();
-		q.setSubject("sbb가 무엇인가요?????????");
+		q.setSubject("sbb가 무엇인가요???????");
+		q.setContent("아... sbb 어렵다.");
 		// 4. 수정한 값을 DB에 적용
-		this.questionRepository.save(q);		//INSERT가 아닌 UPDATE가 실행
+		this.questionRepository.save(q);	// insert가 아닌 update가 실행
 	}
 
 	@Test
 	void testJpaQuestionDelete() {
 		assertEquals(2, this.questionRepository.count());
-		Optional<Question> oq = this.questionRepository.findById(2);
+		Optional<Question> oq = this.questionRepository.findById(1);
 		assertTrue(oq.isPresent());
 		Question q = oq.get();
 		this.questionRepository.delete(q);
@@ -143,20 +131,32 @@ class SbbApplicationTests {
 		assertTrue(oq.isPresent());
 		Question q = oq.get();
 
-		//2. 답변데이터 저장하기
+		// 2. 답변 데이터 저장하기
 		Answer a = new Answer();
 		a.setContent("네 자동으로 생성됩니다.");
 		a.setCreateDate(LocalDateTime.now());
-		a.setQuestion(q);
+		a.setQuestion(q);  // 어떤 질문의 답변인지 알기위해서 Question 객체가 필요하다.
 		this.answerRepository.save(a);
 	}
 
 	@Test
 	void testJpaAnswerSelect() {
-		// 1. 질문 데이터 가져오기
 		Optional<Answer> oa = this.answerRepository.findById(1);
 		assertTrue(oa.isPresent());
 		Answer a = oa.get();
 		assertEquals(2, a.getQuestion().getId());
+	}
+
+	@Test
+	@Transactional	// -> DB 세션을 유지
+	void testJpaAnswerSelect2() {
+		Optional<Question> oq = this.questionRepository.findById(2);
+		assertTrue(oq.isPresent());
+		Question q = oq.get();
+
+		List<Answer> answerList = q.getAnswerList();
+
+		assertEquals(1, answerList.size());
+		assertEquals("네 자동으로 생성됩니다.", answerList.get(0).getContent());
 	}
 }
