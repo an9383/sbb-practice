@@ -1,5 +1,6 @@
 package com.mysite.sbb.user;
 
+import com.mysite.sbb.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,19 +28,19 @@ public class UserService {
         return siteUser;
     }
 
-    private SiteUser getSiteUser(String username) {
+    public SiteUser getUser(String username) {
         // username에 해당하는 사용자 정보 가져오기
         Optional<SiteUser> optionalSiteUser = this.userRepository.findByusername(username);
         // username이 있으면 실제 siteuser 사용자 정보 전달. 없으면 null을 전달
         if(optionalSiteUser.isPresent()) {
             return optionalSiteUser.get();
         } else {
-            return null;
+            throw new DataNotFoundException("siteuser not found");
         }
     }
 
     public boolean isLoginSuccess(String username, String password) {
-        SiteUser siteUser = getSiteUser(username);
+        SiteUser siteUser = getUser(username);
         if (siteUser != null) {
             String siteUserPassword = siteUser.getPassword();
             if (siteUserPassword.equals(password))
