@@ -54,22 +54,22 @@ public class UserController {
         return "login_form";
     }
 
-    @PostMapping("/login")
-    public String login(@Valid UserLoginForm userLoginForm, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "login_form";
-        }
-
-        boolean isLoginSuccess
-                = this.userService.isLoginSuccess(
-                        userLoginForm.getUsername(),
-                        userLoginForm.getPassword()
-                    );
-        if (isLoginSuccess) {
-            return "redirect:/";
-        } else {
-            bindingResult.reject("usernamePasswordInCorrect","로그인 오류");
-            return "login_form";
-        }
-    }
+//    @PostMapping("/login")
+//    public String login(@Valid UserLoginForm userLoginForm, BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            return "login_form";
+//        }
+//
+//        boolean isLoginSuccess
+//                = this.userService.isLoginSuccess(
+//                        userLoginForm.getUsername(),
+//                        userLoginForm.getPassword()
+//                    );
+//        if (isLoginSuccess) {
+//            return "redirect:/";
+//        } else {
+//            bindingResult.reject("usernamePasswordInCorrect","로그인 오류");
+//            return "login_form";
+//        }
+//    }
 }
