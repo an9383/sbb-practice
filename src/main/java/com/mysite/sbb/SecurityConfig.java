@@ -27,6 +27,7 @@ public class SecurityConfig {
                         -> headers.addHeaderWriter(
                                 new XFrameOptionsHeaderWriter(
                                         XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .formLogin((login) -> login.loginPage("/user/login").defaultSuccessUrl("/"))
         ;
         return http.build();
     }

@@ -2,6 +2,7 @@ package com.mysite.sbb.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,14 +33,24 @@ public class UserController {
             return "signup_form";
         }
 
-        userService.create(userCreateForm.getUsername(),
-                userCreateForm.getEmail(), userCreateForm.getPassword1());
+        try {
+            userService.create(userCreateForm.getUsername(),
+                    userCreateForm.getEmail(), userCreateForm.getPassword1());
+        } catch (DataIntegrityViolationException e) {       // 중복된 사용자명 가입 처리
+            e.printStackTrace();
+            bindingResult.reject("signfailed", "이미 등록된 사용자입니다. 다른 사용자명을 입력해 주세요.");
+            return "signup_form";
+        } catch (Exception e) {
+            e.printStackTrace();
+            bindingResult.reject("signupfailed", e.getMessage());
+            return "signup_form";
+        }
 
         return "redirect:/";
     }
 
     @GetMapping("/login")
-    public String login(UserLoginForm userLoginForm) {
+    public String login() {
         return "login_form";
     }
 
@@ -49,7 +60,11 @@ public class UserController {
             return "login_form";
         }
 
-        boolean isLoginSuccess = this.userService.isLoginSuccess(userLoginForm.getUsername(), userLoginForm.getPassword());
+        boolean isLoginSuccess
+                = this.userService.isLoginSuccess(
+                        userLoginForm.getUsername(),
+                        userLoginForm.getPassword()
+                    );
         if (isLoginSuccess) {
             return "redirect:/";
         } else {
