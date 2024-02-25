@@ -65,7 +65,7 @@ public class QuestionController {
     @GetMapping("/modify/{id}")
     public String questionModfiy(@PathVariable("id") Integer id, QuestionForm questionForm, Principal principal) {
         Question question = this.questionService.getQuestion(id);
-        // 로그인한 유저에 한해서만 수정가능 하도록 방어코드 작성
+        // 로그인한 유저의 작성한 유저에 한해서만 수정가능 하도록 방어코드 작성
         if(!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -88,7 +88,7 @@ public class QuestionController {
         }
 
         Question question = this.questionService.getQuestion(id);
-        // 로그인한 유저에 한해서만 수정가능 하도록 방어코드 작성
+        // 로그인한 유저의 작성한 유저에 한해서만 수정가능 하도록 방어코드 작성
         if(!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -97,5 +97,18 @@ public class QuestionController {
         this.questionService.modify(question, questionForm);
 
         return String.format("redirect:/question/detail/%s", id);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String questionDelete(@PathVariable("id") Integer id, Principal principal) {
+        Question question = this.questionService.getQuestion(id);
+        // 로그인한 유저의 작성한 유저에 한해서만 수정가능 하도록 방어코드 작성
+        if(!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
+        }
+        this.questionService.delete(question);
+
+        return "redirect:/";
     }
 }
