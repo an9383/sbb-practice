@@ -50,12 +50,13 @@ public class QuestionService {
         this.questionRepository.save(q1);
     }
 
-    public Page<Question> getList(int page) {
+    public Page<Question> getList(int page, String keyword) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
-
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.questionRepository.findAll(pageable);
+
+        Specification<Question> specification = search(keyword);
+        return this.questionRepository.findAll(specification, pageable);
     }
 
     public void modify(Question question, QuestionForm questionForm) {
@@ -84,13 +85,14 @@ public class QuestionService {
                 Join<Question, SiteUser> u1 = q.join("author", JoinType.LEFT);
                 Join<Question, Answer> a = q.join("answerList", JoinType.LEFT);
                 Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
-                return cb.or(cb.like(q.get("subject"), "%" + kw + "%"), // 제목
-                        cb.like(q.get("content"), "%" + kw + "%"),      // 내용
-                        cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자
-                        cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용
-                        cb.like(u2.get("username"), "%" + kw + "%"));   // 답변 작성자
+
+                return cb.or(cb.like(q.get("subject"), "%" + kw + "%"),      // 제목
+                             cb.like(q.get("content"), "%" + kw + "%"),      // 내용
+                             cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자
+                             cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용
+                             cb.like(u2.get("username"), "%" + kw + "%")     // 답변 작성자
+                       );
             }
         };
     }
-
 }
