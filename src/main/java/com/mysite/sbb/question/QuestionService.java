@@ -56,7 +56,8 @@ public class QuestionService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
 
         Specification<Question> specification = search(keyword);
-        return this.questionRepository.findAll(specification, pageable);
+        //return this.questionRepository.findAll(specification, pageable);
+        return this.questionRepository.findAllByKeyword(keyword, pageable);
     }
 
     public void modify(Question question, QuestionForm questionForm) {
@@ -95,4 +96,6 @@ public class QuestionService {
             }
         };
     }
+
+
 }
