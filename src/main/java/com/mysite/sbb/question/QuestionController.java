@@ -33,6 +33,7 @@ public class QuestionController {
         Page<Question> paging = questionService.getList(page, kw);
         //model.addAttribute("questionList", questionList);   // thylemeaf에 데이터를 전달하는 방법
         model.addAttribute("paging", paging);
+        model.addAttribute("kw", kw);
 
         return "question_list";
     }
