@@ -16,12 +16,12 @@ public class HelloLombok {
     }
 
     public void setHello2(String hello2) {
-        this.hello2 = hello2 + " 테스트2";
+        this.hello2 = hello2 + " TEST2";
     }
 
     public static void main(String[] args) {
-        HelloLombok helloLombok = new HelloLombok("헬로", 5);
-        helloLombok.setHello2("헬로2");
+        HelloLombok helloLombok = new HelloLombok("HELLO", 5);
+        helloLombok.setHello2("HELLO2");
 
 //        System.out.println(helloLombok.getHello());
 //        System.out.println(helloLombok.getLombok());
